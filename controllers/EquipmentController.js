@@ -1,3 +1,4 @@
+const { c } = require('tar')
 const Equipment = require('../models/Equipment')
 const mongoose = require('mongoose')
 
@@ -66,12 +67,24 @@ const updateEquipment = async (req, res) => {
         if(!equipment){
             return res.status(404).json("No such Equipment")
         }
-        const changedEquipment=await Equipment.find({lab:equipment.lab})
+        const changedEquipment=await Equipment.find({lab:req.body.lab})
+        console.log(req.body.lab)
         res.status(200).json(changedEquipment)
     }
     catch(error){
         return res.status(400).json(error.message)
     }
 }
+const searchEquipment = async (req, res) => {
+    const name=req.body.name
+    try {
+        const result=await Equipment.find({name:{$regex:name,$options:'i'}})
+        res.status(200).json(result)
+    }
+    catch (error) {
+        return res.status(400).json(error.message)
+    }
+}
 
-module.exports = { createEquipment, getEquipments, getEquipment,deleteEquipment,updateEquipment }
+
+module.exports = { createEquipment, getEquipments, getEquipment,deleteEquipment,updateEquipment,searchEquipment }
